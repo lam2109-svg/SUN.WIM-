@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>SUM.WIM — Tài Xỉu Demo</title>
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+:root{
+    --gold:#e8bd58;
+    --gold2:#9b6b19;
+    --red:#8b1010;
+    --dark:#070303;
+    --panel:#170606;
+    --text:#f8e9bd;
+}
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    color:white;
+    background:
+        radial-gradient(circle at 50% 45%,#45120b 0%,#180505 38%,#050101 80%);
+}
+/* ================= AUTH ================= */
+#auth{
+    position:fixed;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    background:
+        radial-gradient(circle at center,#4b0c08,#0b0101 70%);
+}
+.auth-box{
+    width:min(400px,92vw);
+    padding:28px;
+    border-radius:26px;
+    background:
+        linear-gradient(145deg,#270909,#090202);
+    border:2px solid var(--gold);
+    box-shadow:
+        0 0 40px rgba(226,176,69,.22),
+        inset 0 0 35px rgba(226,176,69,.06);
+}
+.logo{
+    text-align:center;
+    color:var(--gold);
+    font-size:34px;
+    font-weight:900;
+    letter-spacing:5px;
+    text-shadow:0 0 15px rgba(232,189,88,.35);
+}
+.demo-label{
+    text-align:center;
+    margin:7px 0 25px;
+    color:#bca36c;
+    font-size:12px;
+    letter-spacing:2px;
+}
+.auth-box input{
+    width:100%;
+    height:48px;
+    margin:6px 0;
+    padding:0 15px;
+    color:white;
+    background:#100303;
+    border:1px solid #69491a;
+    border-radius:13px;
+    outline:none;
+}
+.auth-box input:focus{
+    border-color:var(--gold);
+}
+.auth-btn{
+    width:100%;
+    height:48px;
+    margin-top:12px;
+    border-radius:13px;
+    border:1px solid #f0cc6d;
+    background:
+        linear-gradient(#e9c15d,#8c5d16);
+    color:#1b0c00;
+    font-weight:900;
+}
+.switch{
+    text-align:center;
+    margin-top:16px;
+    color:#a99570;
+    font-size:13px;
+}
+.switch span{
+    color:#f0c85e;
+    cursor:pointer;
+    font-weight:bold;
+}
+/* ================= APP ================= */
+#app{
+    display:none;
+    width:100vw;
+    height:100vh;
+    position:relative;
+    background:
+        radial-gradient(circle at 50% 50%,#42110a,#150403 48%,#040101);
+}
+/* chip decorations */
+#app::before,
+#app::after{
+    content:"";
+    position:absolute;
+    top:50%;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#eee0ad;
+    box-shadow:
+        0 -40px #eee0ad,
+        0 -80px #eee0ad,
+        0 40px #eee0ad,
+        0 80px #eee0ad;
+    opacity:.65;
+}
+#app::before{
+    left:7px;
+}
+#app::after{
+    right:7px;
+}
+/* ================= TOP BAR ================= */
+.topbar{
+    position:absolute;
+    top:10px;
+    left:12px;
+    right:12px;
+    height:60px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:7px 10px;
+    background:rgba(10,2,2,.94);
+    border:1px solid #76521c;
+    border-radius:19px;
+    box-shadow:
+        0 8px 25px #000,
+        inset 0 0 20px rgba(225,177,65,.05);
+    z-index:100;
+}
+.brand{
+    color:#e9bd58;
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:3px;
+}
+.nav{
+    display:flex;
+    gap:7px;
+    overflow-x:auto;
+    scrollbar-width:none;
+}
+.nav::-webkit-scrollbar{
+    display:none;
+}
+.nav button{
+    white-space:nowrap;
+    padding:10px 15px;
+    border-radius:13px;
+    border:1px solid #684919;
+    background:#210707;
+    color:#d5bd8c;
+    font-weight:800;
+}
+.nav button.active{
+    background:
+        linear-gradient(#e7bd59,#80540e);
+    color:#160800;
+}
+.profile{
+    flex-shrink:0;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    border:1px solid var(--gold);
+    background:
+        radial-gradient(circle,#4b160b,#130303);
+    font-size:20px;
+}
+/* ================= PROFILE ================= */
+.profile-menu{
+    display:none;
+    position:absolute;
+    top:64px;
+    right:0;
+    width:220px;
+    background:#100303;
+    border:1px solid #8d6420;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 12px 35px #000;
+}
+.profile-menu.show{
+    display:block;
+}
+.profile-head{
+    padding:15px;
+    background:#220707;
+    border-bottom:1px solid #4d3210;
+}
+.profile-name{
+    color:#edc864;
+    font-weight:bold;
+}
+.profile-points{
+    color:#bda77b;
+    font-size:13px;
+    margin-top:4px;
+}
+.profile-menu-item{
+    padding:14px;
+    border-bottom:1px solid #2c1609;
+    cursor:pointer;
+}
+.profile-menu-item:hover{
+    background:#2d0b0b;
+}
+.profile-menu-item.logout{
+    color:#ff8b8b;
+}
+/* ================= MAIN ================= */
+.main{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:80px 20px 20px;
+}
+.game{
+    position:relative;
+    width:min(900px,94vw);
+    height:min(570px,76vh);
+    padding:25px;
+    border-radius:45px;
+    border:4px solid #9b6c20;
+    background:
+        radial-gradient(circle at center,#301006,#100302 67%);
+    box-shadow:
+        0 0 45px rgba(220,165,55,.2),
+        inset 0 0 50px rgba(230,175,55,.06);
+}
+/* ================= GAME HEADER ================= */
+.game-title{
+    text-align:center;
+    color:#edc865;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:5px;
+}
+.session{
+    text-align:center;
+    color:#907950;
+    margin-top:5px;
+    font-size:13px;
+}
+/* ================= POINTS ================= */
+.points-box{
+    position:absolute;
+    top:20px;
+    right:28px;
+    min-width:150px;
+    padding:8px 12px;
+    text-align:center;
+    border-radius:13px;
+    border:1px solid #79551b;
+    background:#120303;
+}
+.points-label{
+    color:#917a51;
+    font-size:10px;
+}
+.points{
+    color:#f0ca62;
+    font-size:18px;
+    font-weight:900;
+}
+/* ================= TIMER ================= */
+.timer{
+    width:120px;
+    height:120px;
+    margin:18px auto;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:50%;
+    border:5px solid #bd8b2d;
+    background:
+        radial-gradient(circle,#080808 52%,#4a2e0b 54%,#080202 70%);
+    box-shadow:
+        0 0 25px rgba(230,177,64,.25),
+        inset 0 0 15px #000;
+}
+#timer{
+    font-size:46px;
+    font-weight:900;
+    color:#fff0b4;
+}
+/* ================= DICE ================= */
+.dice-area{
+    min-height:90px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:18px;
+}
+.die{
+    width:75px;
+    height:75px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:16px;
+    background:
+        linear-gradient(145deg,#f5f5f5,#999);
+    color:#111;
+    font-size:38px;
+    font-weight:900;
+    box-shadow:
+        inset 4px 4px 9px #fff,
+        inset -5px -5px 10px #333,
+        0 8px 18px #000;
+}
+/* ================= RESULT ================= */
+.result{
+    text-align:center;
+    min-height:65px;
+    margin-top:8px;
+}
+.result-title{
+    font-size:32px;
+    font-weight:900;
+    color:#f0ca60;
+}
+.total{
+    color:#b9a47a;
+    margin-top:5px;
+}
+/* ================= CHOICE ================= */
+.choice-area{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-top:10px;
+}
+.choice{
+    width:150px;
+    height:48px;
+    border-radius:13px;
+    border:1px solid #8b6220;
+    color:white;
+    font-weight:900;
+    background:#230606;
+}
+.choice.selected{
+    background:
+        linear-gradient(#e4b94f,#81530d);
+    color:#180900;
+    box-shadow:
+        0 0 18px rgba(231,187,79,.3);
+}
+/* ================= BET PANEL ================= */
+.bet-panel{
+    display:none;
+    position:absolute;
+    left:50%;
+    bottom:12px;
+    transform:translateX(-50%);
+    width:min(650px,90%);
+    padding:12px;
+    background:#100303;
+    border:1px solid #825b1d;
+    border-radius:17px;
+    box-shadow:0 8px 25px #000;
+}
+.bet-panel.show{
+    display:block;
+}
+.bet-title{
+    text-align:center;
+    color:#cbb277;
+    font-size:11px;
+    margin-bottom:8px;
+}
+.bet-options{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:6px;
+}
+.bet-btn{
+    min-width:65px;
+    padding:8px 9px;
+    border-radius:10px;
+    background:#250707;
+    color:#e1c983;
+    border:1px solid #674719;
+    font-weight:bold;
+}
+.bet-btn.selected{
+    background:#c39437;
+    color:#180b00;
+}
+.allin{
+    background:#7d1414;
+    color:white;
+    border-color:#c53b3b;
+}
+/* ================= START BUTTON ================= */
+.start-btn{
+    display:block;
+    margin:12px auto 0;
+    padding:12px 30px;
+    border-radius:13px;
+    background:
+        linear-gradient(#e6bd58,#81530e);
+    color:#180a00;
+    font-weight:900;
+    border:1px solid #f1d17b;
+}
+/* ================= NOTICE ================= */
+.notice{
+    position:absolute;
+    left:18px;
+    bottom:12px;
+    color:#78674b;
+    font-size:10px;
+}
+/* ================= ADMIN ================= */
+.admin-panel{
+    display:none;
+    position:absolute;
+    left:18px;
+    top:80px;
+    padding:9px 12px;
+    border-radius:12px;
+    background:#230606;
+    border:1px solid #823333;
+}
+.admin-panel.show{
+    display:block;
+}
+.admin-btn{
+    padding:8px 12px;
+    border-radius:9px;
+    background:#a32929;
+    color:white;
+    font-weight:bold;
+}
+/* ================= TOAST ================= */
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+    transform:translateX(-50%) translateY(100px);
+    padding:12px 20px;
+    border-radius:13px;
+    background:#1d0606;
+    border:1px solid #a67625;
+    color:#f1d37d;
+    box-shadow:0 8px 25px #000;
+    transition:.3s;
+    z-index:99999;
+}
+.toast.show{
+    transform:translateX(-50%) translateY(0);
+}
+/* ================= MOBILE LANDSCAPE ================= */
+@media(max-width:700px){
+    .brand{
+        display:none;
+    }
+    .topbar{
+        height:50px;
+    }
+    .main{
+        padding:62px 10px 8px;
+    }
+    .game{
+        width:96vw;
+        height:calc(100vh - 70px);
+        padding:13px;
+        border-radius:28px;
+    }
+    .game-title{
+        font-size:20px;
+        letter-spacing:3px;
+    }
+    .session{
+        font-size:10px;
+    }
+    .points-box{
+        top:10px;
+        right:12px;
+        min-width:105px;
+        padding:5px 8px;
+    }
+    .points{
+        font-size:13px;
+    }
+    .timer{
+        width:82px;
+        height:82px;
+        margin:7px auto;
+    }
+    #timer{
+        font-size:31px;
+    }
+    .dice-area{
+        min-height:60px;
+        gap:10px;
+    }
+    .die{
+        width:55px;
+        height:55px;
+        border-radius:12px;
+        font-size:27px;
+    }
+    .result{
+        min-height:47px;
+    }
+    .result-title{
+        font-size:23px;
+    }
+    .choice{
+        width:110px;
+        height:40px;
+    }
+    .bet-panel{
+        bottom:5px;
+        padding:7px;
+    }
+    .bet-btn{
+        min-width:48px;
+        padding:6px;
+        font-size:11px;
+    }
+    .notice{
+        display:none;
+    }
+}
+</style>
+</head>
+<body>
+<!-- ========================================================= -->
+<!-- AUTH -->
+<!-- ========================================================= -->
+<section id="auth">
+<div class="auth-box">
+    <div class="logo">SUM.WIM</div>
+    <div class="demo-label">
+        TÀI XỈU • DEMO POINTS
+    </div>
+    <!-- LOGIN -->
+    <div id="loginForm">
+        <input
+            id="loginUser"
+            placeholder="Tên tài khoản">
+        <input
+            id="loginPass"
+            type="password"
+            placeholder="Mật khẩu">
+        <button
+            class="auth-btn"
+            onclick="login()">
+            ĐĂNG NHẬP
+        </button>
+        <div class="switch">
+            Chưa có tài khoản?
+            <span onclick="showRegister()">
+                ĐĂNG KÝ
+            </span>
+        </div>
+    </div>
+    <!-- REGISTER -->
+    <div id="registerForm"
+         style="display:none">
+        <input
+            id="regUser"
+            placeholder="Tên tài khoản">
+        <input
+            id="regPass"
+            type="password"
+            placeholder="Mật khẩu">
+        <input
+            id="regPass2"
+            type="password"
+            placeholder="Nhập lại mật khẩu">
+        <button
+            class="auth-btn"
+            onclick="register()">
+            ĐĂNG KÝ
+        </button>
+        <div class="switch">
+            Đã có tài khoản?
+            <span onclick="showLogin()">
+                ĐĂNG NHẬP
+            </span>
+        </div>
+    </div>
+</div>
+</section>
+<!-- ========================================================= -->
+<!-- APP -->
+<!-- ========================================================= -->
+<section id="app">
+<header class="topbar">
+    <div class="brand">
+        SUM.WIM
+    </div>
+    <nav class="nav">
+        <button class="active">
+            TÀI XỈU
+        </button>
+        <button>
+            AVIATOR
+        </button>
+        <button>
+            BACCARAT
+        </button>
+    </nav>
+    <button
+        class="profile"
+        onclick="toggleProfile()">
+        👤
+    </button>
+    <!-- PROFILE MENU -->
+    <div
+        class="profile-menu"
+        id="profileMenu">
+        <div class="profile-head">
+            <div class="profile-name"
+                 id="profileName">
+                USER
+            </div>
+            <div class="profile-points">
+                Điểm demo:
+                <span id="profilePoints">
+                    $350
+                </span>
+            </div>
+        </div>
+        <div
+            class="profile-menu-item"
+            onclick="showHistory()">
+            📜 LỊCH SỬ PHIÊN
+        </div>
+        <div
+            class="profile-menu-item"
+            onclick="changePassword()">
+            🔐 ĐỔI MẬT KHẨU
+        </div>
+        <div
+            class="profile-menu-item logout"
+            onclick="logout()">
+            🚪 LOGOUT
+        </div>
+    </div>
+</header>
+<main class="main">
+<div class="game">
+    <div class="game-title">
+        🎲 TÀI XỈU
+    </div>
+    <div class="session">
+        PHIÊN #
+        <span id="session">
+            23071
+        </span>
+    </div>
+    <!-- POINTS -->
+    <div class="points-box">
+        <div class="points-label">
+            DEMO POINTS
+        </div>
+        <div
+            class="points"
+            id="points">
+            $350
+        </div>
+    </div>
+    <!-- TIMER -->
+    <div class="timer">
+        <span id="timer">
+            60
+        </span>
+    </div>
+    <!-- DICE -->
+    <div class="dice-area">
+        <div class="die" id="d1">
+            ?
+        </div>
+        <div class="die" id="d2">
+            ?
+        </div>
+        <div class="die" id="d3">
+            ?
+        </div>
+    </div>
+    <!-- RESULT -->
+    <div class="result">
+        <div
+            class="result-title"
+            id="result">
+            CHỌN CỬA
+        </div>
+        <div class="total">
+            Tổng:
+            <span id="total">
+                -
+            </span>
+        </div>
+    </div>
+    <!-- CHOICE -->
+    <div class="choice-area">
+        <button
+            class="choice"
+            id="taiBtn"
+            onclick="choose('TAI')">
+            TÀI
+        </button>
+        <button
+            class="choice"
+            id="xiuBtn"
+            onclick="choose('XIU')">
+            XỈU
+        </button>
+    </div>
+    <!-- BET PANEL -->
+    <div
+        class="bet-panel"
+        id="betPanel">
+        <div class="bet-title">
+            CHỌN ĐIỂM DEMO
+        </div>
+        <div class="bet-options">
+            <button
+                class="bet-btn"
+                onclick="selectBet(10)">
+                $10
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(20)">
+                $20
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(50)">
+                $50
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(100)">
+                $100
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(200)">
+                $200
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(500)">
+                $500
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(1000)">
+                $1K
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(5000)">
+                $5K
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(10000)">
+                $10K
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(35000)">
+                $35K
+            </button>
+            <button
+                class="bet-btn"
+                onclick="selectBet(50000)">
+                $50K
+            </button>
+            <button
+                class="bet-btn allin"
+                onclick="selectAllIn()">
+                ALL-IN
+            </button>
+        </div>
+    </div>
+    <!-- ADMIN -->
+    <div
+        class="admin-panel"
+        id="adminPanel">
+        <button
+            class="admin-btn"
+            onclick="adminAddPoints()">
+            ⚡ BƠM ĐIỂM DEMO
+        </button>
+    </div>
+    <button
+        class="start-btn"
+        id="startBtn"
+        onclick="startRound()">
+        BẮT ĐẦU PHIÊN
+    </button>
+    <div class="notice">
+        DEMO POINTS — KHÔNG CÓ GIÁ TRỊ TIỀN TỆ
+    </div>
+</div>
+</main>
+</section>
+<div
+    class="toast"
+    id="toast">
+    OK
+</div>
+<script>
+/* =========================================================
+   DATABASE LOCAL
+========================================================= */
+function getUsers(){
+    return JSON.parse(
+        localStorage.getItem("SUMWIM_USERS") || "{}"
+    );
+}
+function saveUsers(users){
+    localStorage.setItem(
+        "SUMWIM_USERS",
+        JSON.stringify(users)
+    );
+}
+/* =========================================================
+   ADMIN ACCOUNT
+========================================================= */
+function initAdmin(){
+    const users=getUsers();
+    if(!users["ADMIN_Z11"]){
+        users["ADMIN_Z11"]={
+            password:"ADMIN_Z11",
+            points:2000000000000,
+            admin:true,
+            history:[]
+        };
+        saveUsers(users);
+    }
+}
+initAdmin();
+/* =========================================================
+   AUTH
+========================================================= */
+function showRegister(){
+    document.getElementById("loginForm").style.display="none";
+    document.getElementById("registerForm").style.display="block";
+}
+function showLogin(){
+    document.getElementById("registerForm").style.display="none";
+    document.getElementById("loginForm").style.display="block";
+}
+function register(){
+    const username=
+        document.getElementById("regUser").value.trim();
+    const password=
+        document.getElementById("regPass").value;
+    const password2=
+        document.getElementById("regPass2").value;
+    if(!username || !password){
+        alert("Vui lòng nhập đầy đủ thông tin.");
+        return;
+    }
+    if(password!==password2){
+        alert("Mật khẩu nhập lại không giống nhau.");
+        return;
+    }
+    const users=getUsers();
+    if(users[username]){
+        alert("Tài khoản đã tồn tại.");
+        return;
+    }
+    users[username]={
+        password:password,
+        points:350,
+        admin:false,
+        history:[]
+    };
+    saveUsers(users);
+    alert(
+        "Đăng ký thành công!\nBạn nhận được $350 DEMO POINTS."
+    );
+    showLogin();
+}
+function login(){
+    const username=
+        document.getElementById("loginUser").value.trim();
+    const password=
+        document.getElementById("loginPass").value;
+    const users=getUsers();
+    if(
+        !users[username] ||
+        users[username].password!==password
+    ){
+        alert("Sai tài khoản hoặc mật khẩu.");
+        return;
+    }
+    localStorage.setItem(
+        "SUMWIM_CURRENT",
+        username
+    );
+    enterApp(username);
+}
+function enterApp(username){
+    document.getElementById("auth").style.display="none";
+    document.getElementById("app").style.display="block";
+    document.getElementById("profileName")
+        .textContent=username;
+    updatePoints();
+    const user=getCurrentUser();
+    if(user && user.admin){
+        document
+            .getElementById("adminPanel")
+            .classList.add("show");
+    }
+    resetRound();
+}
+/* =========================================================
+   USER
+========================================================= */
+function getCurrentUsername(){
+    return localStorage.getItem(
+        "SUMWIM_CURRENT"
+    );
+}
+function getCurrentUser(){
+    const users=getUsers();
+    return users[getCurrentUsername()];
+}
+function updatePoints(){
+    const user=getCurrentUser();
+    if(!user) return;
+    const formatted=
+        formatPoints(user.points);
+    document.getElementById("points")
+        .textContent="$"+formatted;
+    document.getElementById("profilePoints")
+        .textContent="$"+formatted;
+}
+function formatPoints(value){
+    if(value>=1000000000000)
+        return (value/1000000000000).toFixed(2)+"T";
+    if(value>=1000000000)
+        return (value/1000000000).toFixed(2)+"B";
+    if(value>=1000000)
+        return (value/1000000).toFixed(2)+"M";
+    if(value>=1000)
+        return (value/1000).toFixed(2)+"K";
+    return Math.floor(value).toLocaleString("en-US");
+}
+/* =========================================================
+   PROFILE
+========================================================= */
+function toggleProfile(){
+    document
+        .getElementById("profileMenu")
+        .classList.toggle("show");
+}
+function changePassword(){
+    const user=getCurrentUser();
+    if(!user) return;
+    const newPassword=
+        prompt("Nhập mật khẩu mới:");
+    if(!newPassword) return;
+    const users=getUsers();
+    users[getCurrentUsername()].password=
+        newPassword;
+    saveUsers(users);
+    showToast("Đã đổi mật khẩu.");
+}
+function logout(){
+    localStorage.removeItem(
+        "SUMWIM_CURRENT"
+    );
+    location.reload();
+}
+/* =========================================================
+   GAME
+========================================================= */
+let session=23071;
+let time=60;
+let timer=null;
+let selectedSide=null;
+let selectedBet=0;
+let roundActive=false;
+let resultShown=false;
+function resetRound(){
+    clearInterval(timer);
+    time=60;
+    selectedSide=null;
+    selectedBet=0;
+    roundActive=false;
+    resultShown=false;
+    document.getElementById("timer")
+        .textContent="60";
+    document.getElementById("d1")
+        .textContent="?";
+    document.getElementById("d2")
+        .textContent="?";
+    document.getElementById("d3")
+        .textContent="?";
+    document.getElementById("total")
+        .textContent="-";
+    document.getElementById("result")
+        .textContent="CHỌN CỬA";
+    document.getElementById("betPanel")
+        .classList.remove("show");
+    document.getElementById("startBtn")
+        .disabled=false;
+}
+function startRound(){
+    if(roundActive) return;
+    const user=getCurrentUser();
+    if(!user) return;
+    roundActive=true;
+    resultShown=false;
+    selectedSide=null;
+    selectedBet=0;
+    document.getElementById("taiBtn")
+        .classList.remove("selected");
+    document.getElementById("xiuBtn")
+        .classList.remove("selected");
+    document.getElementById("betPanel")
+        .classList.remove("show");
+    document.getElementById("startBtn")
+        .disabled=true;
+    time=60;
+    document.getElementById("result")
+        .textContent="CHỜ KẾT QUẢ";
+    timer=setInterval(()=>{
+        time--;
+        document.getElementById("timer")
+            .textContent=time;
+        if(time<=0){
+            clearInterval(timer);
+            finishRound();
+        }
+    },1000);
+}
+/* =========================================================
+   CHOOSE SIDE
+========================================================= */
+function choose(side){
+    if(!roundActive){
+        showToast("Hãy bấm BẮT ĐẦU PHIÊN trước.");
+        return;
+    }
+    if(time<=0){
+        showToast("Phiên đã kết thúc.");
+        return;
+    }
+    selectedSide=side;
+    document.getElementById("taiBtn")
+        .classList.remove("selected");
+    document.getElementById("xiuBtn")
+        .classList.remove("selected");
+    if(side==="TAI"){
+        document.getElementById("taiBtn")
+            .classList.add("selected");
+    }else{
+        document.getElementById("xiuBtn")
+            .classList.add("selected");
+    }
+    document.getElementById("betPanel")
+        .classList.add("show");
+    showToast(
+        "Đã chọn "+(side==="TAI"?"TÀI":"XỈU")
+    );
+}
+/* =========================================================
+   DEMO POINTS
+========================================================= */
+function selectBet(amount){
+    if(!selectedSide){
+        showToast("Hãy chọn TÀI hoặc XỈU.");
+        return;
+    }
+    const user=getCurrentUser();
+    if(amount>user.points){
+        showToast("Không đủ DEMO POINTS.");
+        return;
+    }
+    selectedBet=amount;
+    document.querySelectorAll(".bet-btn")
+        .forEach(btn=>{
+            btn.classList.remove("selected");
+        });
+    event.target.classList.add("selected");
+    showToast(
+        "Điểm demo: $"+
+        formatPoints(amount)
+    );
+}
+function selectAllIn(){
+    if(!selectedSide){
+        showToast("Hãy chọn TÀI hoặc XỈU.");
+        return;
+    }
+    const user=getCurrentUser();
+    if(user.points<=0){
+        showToast("Không còn DEMO POINTS.");
+        return;
+    }
+    selectedBet=user.points;
+    document.querySelectorAll(".bet-btn")
+        .forEach(btn=>{
+            btn.classList.remove("selected");
+        });
+    event.target.classList.add("selected");
+    showToast("ALL-IN DEMO POINTS.");
+}
+/* =========================================================
+   RESULT
+========================================================= */
+function finishRound(){
+    if(resultShown) return;
+    resultShown=true;
+    const d1=
+        Math.floor(Math.random()*6)+1;
+    const d2=
+        Math.floor(Math.random()*6)+1;
+    const d3=
+        Math.floor(Math.random()*6)+1;
+    const total=d1+d2+d3;
+    document.getElementById("d1")
+        .textContent=d1;
+    document.getElementById("d2")
+        .textContent=d2;
+    document.getElementById("d3")
+        .textContent=d3;
+    document.getElementById("total")
+        .textContent=total;
+    /*
+      Demo:
+      tổng >= 11 = TÀI
+      tổng <= 10 = XỈU
+    */
+    const result=
+        total>=11
+        ? "TAI"
+        : "XIU";
+    document.getElementById("result")
+        .textContent=
+        result==="TAI"
+        ? "TÀI"
+        : "XỈU";
+    settlePoints(result,total);
+    saveHistory(
+        result,
+        total,
+        selectedSide,
+        selectedBet
+    );
+    setTimeout(()=>{
+        session++;
+        document.getElementById("session")
+            .textContent=session;
+        resetRound();
+    },4000);
+}
+/* =========================================================
+   SETTLE DEMO POINTS
+========================================================= */
+function settlePoints(result,total){
+    const users=getUsers();
+    const username=
+        getCurrentUsername();
+    const user=users[username];
+    if(!user) return;
+    /*
+      Không có tiền thật.
+      Đây chỉ là điểm trong localStorage.
+    */
+    if(!selectedSide || selectedBet<=0){
+        showToast(
+            "Phiên kết thúc: "+
+            (result==="TAI"?"TÀI":"XỈU")+
+            " • Tổng "+total
+        );
+        return;
+    }
+    user.points-=selectedBet;
+    if(selectedSide===result){
+        const reward=
+            selectedBet*1.90;
+        user.points+=reward;
+        showToast(
+            "ĐÚNG! +$"+
+            formatPoints(reward)
+        );
+    }else{
+        showToast(
+            "SAI CỬA! -$"+
+            formatPoints(selectedBet)
+        );
+    }
+    saveUsers(users);
+    updatePoints();
+}
+/* =========================================================
+   HISTORY
+========================================================= */
+function saveHistory(
+    result,
+    total,
+    side,
+    bet
+){
+    const users=getUsers();
+    const username=
+        getCurrentUsername();
+    const user=users[username];
+    if(!user) return;
+    user.history=user.history||[];
+    user.history.push({
+        session:session,
+        result:
+            result==="TAI"
+            ?"TÀI"
+            :"XỈU",
+        total:total,
+        selected:
+            side
+            ? (side==="TAI"?"TÀI":"XỈU")
+            : "-",
+        points:bet||0,
+        time:new Date().toLocaleString()
+    });
+    user.history=
+        user.history.slice(-30);
+    saveUsers(users);
+}
+function showHistory(){
+    const user=getCurrentUser();
+    if(!user) return;
+    const history=user.history||[];
+    if(history.length===0){
+        alert("Chưa có lịch sử phiên.");
+        return;
+    }
+    let text=
+        "LỊCH SỬ PHIÊN\n\n";
+    history
+        .slice()
+        .reverse()
+        .forEach(item=>{
+            text+=
+                "#"+item.session+
+                " | "+item.result+
+                " | Tổng "+item.total+
+                " | Chọn "+item.selected+
+                " | $"+formatPoints(item.points)+
+                "\n";
+        });
+    alert(text);
+}
+/* =========================================================
+   ADMIN
+========================================================= */
+function adminAddPoints(){
+    const user=getCurrentUser();
+    if(!user || !user.admin){
+        return;
+    }
+    const amount=
+        Number(
+            prompt(
+                "Nhập số DEMO POINTS muốn cộng:"
+            )
+        );
+    if(!amount || amount<=0){
+        return;
+    }
+    const users=getUsers();
+    users[getCurrentUsername()].points+=amount;
+    saveUsers(users);
+    updatePoints();
+    showToast(
+        "Đã cộng $"+
+        formatPoints(amount)+
+        " DEMO POINTS."
+    );
+}
+/* =========================================================
+   TOAST
+========================================================= */
+function showToast(message){
+    const toast=
+        document.getElementById("toast");
+    toast.textContent=message;
+    toast.classList.add("show");
+    clearTimeout(
+        window.toastTimer
+    );
+    window.toastTimer=
+        setTimeout(()=>{
+            toast.classList.remove("show");
+        },2500);
+}
+/* =========================================================
+   AUTO LOGIN
+========================================================= */
+window.addEventListener("load",()=>{
+    const username=
+        localStorage.getItem(
+            "SUMWIM_CURRENT"
+        );
+    if(username){
+        const users=getUsers();
+        if(users[username]){
+            enterApp(username);
+        }
+    }
+});
+</script>
+</body>
+</html>
